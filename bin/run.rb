@@ -2,4 +2,7 @@ require_relative '../config/environment'
 
 
 
-puts "HELLO WORLD"
+
+puts alexa 
+
+# puts "HELLO WORLD"
