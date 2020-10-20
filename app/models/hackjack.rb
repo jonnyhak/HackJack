@@ -2,15 +2,29 @@ require 'deck-of-cards'
 
 class HackJack
 
+    def run 
+        #welcome
+        #login or sign up
+        #main menu
+        #if pick play a round:
+        play_a_round
+    end
     
+    def play_a_round
+        puts place_your_bet
+        sleep(2) 
+        puts user_cards 
+        sleep(3)
+        puts dealer_card
+    end
     def place_your_bet
         puts "Place your bet!"
         bet_amount = gets.chomp
         if bet_amount.to_i > 20 
-            puts "Bet must be lower than bank amount!"
+            puts "Bet must be lower than your current bank amount!"
             self.place_your_bet
         else 
-            "You bet #{bet_amount.to_i} on this round!"
+            "You bet #{bet_amount.to_i} coins on this round!"
         end
     end
     
@@ -22,7 +36,7 @@ class HackJack
         # user_card_2 = deck.draw
         
         # [user_card_1, user_card_2]
-        deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+        #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
         
         user_card_1 = deck_of_cards.sample.to_s
         user_card_2 = deck_of_cards.sample.to_s
@@ -41,11 +55,6 @@ class HackJack
     end
     
     
-    def run 
-        puts place_your_bet 
-        puts user_cards 
-        puts dealer_card
-    end
     
     private
 
