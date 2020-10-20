@@ -191,12 +191,34 @@ class HackJack
     end
     
     def self.previous_games
-        Round.where(user_id: @user.id).each_with_index do |round, index|
+        @user_rounds = Round.where(user_id: @user.id)
+        @user_rounds.each_with_index do |round, index|
             puts "#{index + 1}." 
             puts "Dealer name: #{round.dealer.name}"
             puts "Your total: #{round.user_card_total}"
             puts "Dealer total: #{round.dealer_card_total}"
         end
+            prompt = TTY::Prompt.new
+            splash = prompt.select("Go Back") do |prompt|
+                prompt.choice "Back to Main Menu"
+            end
+            if splash == "Back to Main Menu"
+                self.login_main_menu
+            end 
+    end
+
+    def self.delete_previous_games 
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Would you like to delete all outcomes?") do |prompt| 
+            prompt.choice "Yes"
+            prompt.choice "No"
+        end
+            if splash == "Yes"
+                @user_rounds.destroy_all
+                puts "All rounds have been deleted."
+            elsif splash == "No"
+                self.login_main_menu 
+            end
     end
 
     private
