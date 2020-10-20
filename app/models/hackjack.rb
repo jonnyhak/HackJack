@@ -34,7 +34,7 @@ class HackJack
         user_password = gets.chomp 
         @user = User.all.find_by(username: user_username, password: user_password)
         if @user 
-            self.play_a_round 
+            self.login_main_menu 
         else
             puts "Invalid username or password."
             self.login 
@@ -47,10 +47,27 @@ class HackJack
         puts "password:"
         user_password = gets.chomp
         @user = User.create(username: user_username, password: user_password)
-        self.play_a_round
+        self.login_main_menu
     end
 
     def self.login_main_menu
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Login Main Menu") do |prompt| 
+            prompt.choice "Play a round"
+            prompt.choice "See bank total"
+            prompt.choice "Logout"
+
+        end
+        if splash == "Play a round"
+            self.play_a_round 
+        elsif splash == "See bank total"
+            puts "Your current bank amount is #{@user.bank} coins."
+            sleep(3)
+            self.login_main_menu
+        elsif splash == "Logout"
+            system('clear')
+            self.main_menu
+        end
         #play a round
         #see previous games
         #see bank total
@@ -179,11 +196,11 @@ class HackJack
                 self.play_a_round
             else
                puts "You are out of coins :("
-               #send to menu page 
+               self.login_main_menu 
             end
         elsif splash == "No"
             puts "See you next time"
-            #send to menu page 
+            self.login_main_menu 
         end
     
     end
