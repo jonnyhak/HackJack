@@ -7,5 +7,7 @@ gem "pry"
 gem "require_all"
 gem "tty-prompt"
 gem "deck-of-cards"
+gem "faker"
+gem 'colorize', '~> 0.8.1'
 
 
