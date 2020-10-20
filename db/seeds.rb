@@ -8,10 +8,10 @@ Dealer.destroy_all
 end
 
  
-Dealer.create(name: "Dealer 1")
-Dealer.create(name: "Dealer 2")
-Dealer.create(name: "Dealer 3")
-Dealer.create(name: "Dealer 4")
-Dealer.create(name: "Dealer 5")
+[Dealer.create(name: "Dealer 1"),
+Dealer.create(name: "Dealer 2"),
+Dealer.create(name: "Dealer 3"),
+Dealer.create(name: "Dealer 4"),
+Dealer.create(name: "Dealer 5")]
 
 
