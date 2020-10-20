@@ -5,8 +5,8 @@ class HackJack
 
     def run 
         #welcome
-        self.class.main_menu 
         #login or sign up
+        self.class.main_menu 
         #main menu
         #if pick play a round:
         #play_a_round
@@ -50,7 +50,7 @@ class HackJack
         self.play_a_round
     end
 
-    def main_menu
+    def self.login_main_menu
         #play a round
         #see previous games
         #see bank total
@@ -70,7 +70,9 @@ class HackJack
     def self.place_your_bet
         puts "Place your bet!"
         bet_amount = gets.chomp
-        @round.wager = bet_amount.to_i
+
+        #@round.wager = bet_amount.to_i
+        @round.update(wager: bet_amount.to_i)
         if bet_amount.to_i > @user.bank
             puts "Bet must be lower than your current bank amount: #{@user.bank}!"
             self.place_your_bet
@@ -80,15 +82,6 @@ class HackJack
     end
     
     def self.user_cards 
-        # deck = DeckOfCards.new
-        # deck.shuffle
-        
-        # user_card_1 = deck.draw
-        # user_card_2 = deck.draw
-        
-        # [user_card_1, user_card_2]
-        #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
-        
         user_card_1 = self.deck_of_cards.sample.to_s
         user_card_2 = self.deck_of_cards.sample.to_s
         puts "Your cards are the #{user_card_1} and the #{user_card_2}."
@@ -98,14 +91,11 @@ class HackJack
     end
     
     def self.dealer_card
-        #deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
-        
         dealer_card_1 = self.deck_of_cards.sample.to_s
         puts "The dealer's cards are #{dealer_card_1} and *unknown*."
         @dealer_total = self.card_parser(dealer_card_1)
         puts "The dealer's total is currently #{@dealer_total}."
     end
-    
     
     
     private
