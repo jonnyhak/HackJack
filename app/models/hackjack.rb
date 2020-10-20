@@ -189,7 +189,7 @@ class HackJack
         @user.bank 
     end
 
-    def self.previous_games
+    def self.previous_rounds
         @user_rounds = Round.where(user_id: @user.id)
         @user_rounds.each_with_index do |round, index|
             puts "#{index + 1}." 
@@ -206,7 +206,7 @@ class HackJack
             end 
     end
 
-    def self.delete_previous_games 
+    def self.delete_previous_rounds
         prompt = TTY::Prompt.new 
         splash = prompt.select("Would you like to delete all outcomes?") do |prompt| 
             prompt.choice "Yes"
