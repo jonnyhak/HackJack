@@ -35,6 +35,14 @@ class HackJack
         dealer_card_1 = deck.sample 
     end
 
+    def hit_or_stay
+
+
+    end
+
+    
+    
+
 
 
 
