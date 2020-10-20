@@ -1,5 +1,6 @@
 require 'deck-of-cards'
 require 'tty-prompt'
+require 'pry'
 
 class HackJack
 
@@ -7,7 +8,10 @@ class HackJack
         self.class.main_menu 
     end
     
-    def self.main_menu 
+    def self.main_menu
+        puts "Welcome to"
+        a = Artii::Base.new 
+        puts a.asciify('HackJack!')
         prompt = TTY::Prompt.new 
         splash = prompt.select("Please log in or sign up!") do |prompt| 
             prompt.choice "log in"
@@ -33,7 +37,8 @@ class HackJack
             self.login_main_menu 
         else
             puts "Invalid username or password."
-            self.login 
+            sleep(2)
+            self.main_menu  
         end
     end
 
@@ -43,15 +48,34 @@ class HackJack
         puts "password:"
         user_password = gets.chomp
         @user = User.create(username: user_username, password: user_password)
-        self.play_a_round
+        self.login_main_menu
     end
 
     def self.login_main_menu
-        #play a round
-        #see previous games
-        #self.previous_games
-        #see bank total
-        #delete previous games
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Login Main Menu") do |prompt| 
+            prompt.choice "Play a round"
+            prompt.choice "See bank total"
+            prompt.choice "See previous rounds"
+            prompt.choice "Delete previous rounds"
+            prompt.choice "Logout"
+
+        end
+        if splash == "Play a round"
+            self.play_a_round 
+        elsif splash == "See bank total"
+            puts "Your current bank amount is #{@user.bank} coins."
+            sleep(3)
+            self.login_main_menu
+        elsif splash == "Logout"
+            system('clear')
+            self.main_menu
+        elsif splash == "See previous rounds"
+            self.previous_rounds
+        elsif splash == "Delete previous rounds"
+            self.delete_previous_rounds
+        end
+    
     end
 
     def self.play_a_round
@@ -67,17 +91,27 @@ class HackJack
     end
 
     def self.place_your_bet
-        puts "Your current bank amount is #{@user.bank} coins."
-        puts "Place your bet!"
-        bet_amount = gets.chomp
+        if @user.bank == 0
+            puts "Insufficient funds"
+            sleep(2)
+            self.login_main_menu
+        else
+            puts "Your current bank amount is #{@user.bank} coins."
+            puts "Place your bet!"
+            bet_amount = gets.chomp
 
-        #@round.wager = bet_amount.to_i
-        @round.update(wager: bet_amount.to_i)
-        if bet_amount.to_i > @user.bank
-            puts "Bet must be lower than your current bank amount: #{@user.bank}!"
-            self.place_your_bet
-        else 
-            "You bet #{bet_amount.to_i} coins on this round!"
+            #@round.wager = bet_amount.to_i
+            @round.update(wager: bet_amount.to_i)
+            if bet_amount.to_i > @user.bank
+                puts "Bet must be lower than your current bank amount: #{@user.bank}!"
+                self.place_your_bet
+            elsif bet_amount.to_i < 1
+                puts "Must place a bet greater than 0"
+                sleep(2)
+                self.place_your_bet
+            else 
+                "You bet #{bet_amount.to_i} coins on this round!"
+            end
         end
     end
     
@@ -126,6 +160,7 @@ class HackJack
             bank_total = @user.bank
             @user.update(bank: bank_total - @round.wager)
             puts "Your bank total is now #{@user.bank}"
+            self.login_main_menu
         end
     end
 
@@ -162,7 +197,7 @@ class HackJack
                 puts "Your bank total is now #{@user.bank}"
             end
         end
-        play_another_round?
+        self.login_main_menu
     end
 
     def self.play_another_round?
@@ -176,17 +211,13 @@ class HackJack
                 self.play_a_round
             else
                puts "You are out of coins :("
-               #send to menu page 
+               self.login_main_menu 
             end
         elsif splash == "No"
             puts "See you next time"
-            #send to menu page 
+            self.login_main_menu 
         end
     
-    end
-    
-    def see_bank
-        @user.bank 
     end
 
     def self.previous_rounds
@@ -214,13 +245,18 @@ class HackJack
         end
             if splash == "Yes"
                 @user_rounds.destroy_all
+                @user.update(bank: 20)
                 puts "All rounds have been deleted."
+                sleep(2)
+                puts "Your bank amount has been set to 20"
+                sleep(2)
+                self.login_main_menu
             elsif splash == "No"
                 self.login_main_menu 
             end
     end
 
-    private
+    # private
 
     def self.deck_of_cards
         DeckOfCards.new.shuffle      
@@ -235,9 +271,9 @@ class HackJack
         elsif card.include?("King")
             card_amount = 10 
         elsif card.include?("Ace")
-            card_amount = 11
+            card_amount = 1
             #when to pick 1 or 11
-        elsif card[0] == 1 && card[1] == 0
+        elsif card.include?("10")
             card_amount = 10 
         else
             card_amount = card[0].to_i
@@ -246,6 +282,6 @@ class HackJack
     end
     
 
-
-
+    
 end #HackJack
+# binding.pry     

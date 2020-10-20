@@ -10,5 +10,6 @@ gem "tty-prompt"
 gem "deck-of-cards"
 gem "faker"
 gem 'colorize', '~> 0.8.1'
+gem 'artii', '~> 2.1', '>= 2.1.2'
 
 
