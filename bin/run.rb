@@ -18,3 +18,5 @@ require 'deck-of-cards'
 # puts "HELLO WORLD"
 app = HackJack.new
 app.run 
+
+#puts HackJack.main_menu
