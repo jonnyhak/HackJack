@@ -65,9 +65,12 @@ class HackJack
         puts self.user_cards 
         sleep(3)
         puts self.dealer_card
+        sleep (2)
+        puts self.hit_or_stay
     end
 
     def self.place_your_bet
+        puts "Your current bank amount is #{@user.bank} coins."
         puts "Place your bet!"
         bet_amount = gets.chomp
 
@@ -84,32 +87,110 @@ class HackJack
     def self.user_cards 
         user_card_1 = self.deck_of_cards.sample.to_s
         user_card_2 = self.deck_of_cards.sample.to_s
+        @user_total = self.card_parser(user_card_1) + self.card_parser(user_card_2)
         puts "Your cards are the #{user_card_1} and the #{user_card_2}."
-        @round.user_card_total = self.card_parser(user_card_1) + self.card_parser(user_card_2)
+        
+        @round.update(user_card_total: @user_total)
         # @round.user_card_total
         puts "Your total is currently #{@round.user_card_total}!"
     end
     
     def self.dealer_card
-        dealer_card_1 = self.deck_of_cards.sample.to_s
-        puts "The dealer's cards are #{dealer_card_1} and *unknown*."
-        @dealer_total = self.card_parser(dealer_card_1)
-        puts "The dealer's total is currently #{@dealer_total}."
+        @dealer_card_1 = self.deck_of_cards.sample.to_s
+        @dealer_total = self.card_parser(@dealer_card_1) 
+        puts "The dealer's cards are #{@dealer_card_1} and *unknown*."
+        @round.update(dealer_card_total: @dealer_total)
+        # @dealer_total.update = self.card_parser(dealer_card_1)
+        puts "The dealer's total is currently #{@round.dealer_card_total}."
+    end
+
+    def self.hit_or_stay 
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Hit or Stay?") do |prompt| 
+            prompt.choice "Hit"
+            prompt.choice "Stay"
+        end
+        if splash == "Hit"
+            self.hit 
+        elsif splash == "Stay"
+            self.stay 
+        end
+    end
+
+    def self.hit 
+        next_card = self.deck_of_cards.sample.to_s
+        puts "Next card is #{next_card}"
+        @round.update(user_card_total: @user_total += self.card_parser(next_card))
+        puts "Your total is currently #{@round.user_card_total}!"
+        if @round.user_card_total <= 21
+            self.hit_or_stay
+        else
+            puts "Over 21! Bust!"
+            bank_total = @user.bank
+            @user.update(bank: bank_total - @round.wager)
+            puts "Your bank total is now #{@user.bank}"
+        end
+    end
+
+    def self.stay 
+        dealer_card_2 = self.deck_of_cards.sample.to_s
+        puts "The dealer's card is #{dealer_card_2}."
+        @round.update(dealer_card_total: @dealer_total += self.card_parser(dealer_card_2))
+        puts "The dealer's total is currently #{@round.dealer_card_total}."
+
+        if @round.dealer_card_total < 17
+            # dealer_new_card = self.deck_of_cards.sample.to_s
+            # puts "Next card is #{dealer_new_card}"
+            # @round.update(dealer_card_total: @dealer_total += self.card_parser(dealer_new_card))
+            # puts "The dealer's total is currently #{@round.dealer_card_total}."
+            sleep(5)
+            self.stay
+        elsif @round.dealer_card_total > 21
+            puts "Dealer Busts!"
+            bank_total = @user.bank
+            @user.update(bank: bank_total + @round.wager)
+            puts "Your bank total is now #{@user.bank}"
+        else
+            if @round.dealer_card_total == @round.user_card_total
+                puts "Push!"
+            elsif @round.dealer_card_total > @round.user_card_total
+                puts "Dealer wins round :("
+                bank_total = @user.bank
+                @user.update(bank: bank_total - @round.wager)
+                puts "Your bank total is now #{@user.bank}"
+            else
+                puts "User wins round :)"
+                bank_total = @user.bank
+                @user.update(bank: bank_total + @round.wager)
+                puts "Your bank total is now #{@user.bank}"
+            end
+        end
+        play_another_round?
+    end
+
+    def self.play_another_round?
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Play another round?") do |prompt| 
+            prompt.choice "Yes!"
+            prompt.choice "No"
+        end
+        if splash == "Yes!"
+            if @user.bank > 0
+                self.play_a_round
+            else
+               puts "You are out of coins :("
+               #send to menu page 
+            end
+        elsif splash == "No"
+            puts "See you next time"
+            #send to menu page 
+        end
+    
     end
     
     
     private
 
-<<<<<<< HEAD
-    def hit_or_stay
-
-
-    end
-
-    
-    
-
-=======
     def self.deck_of_cards
         DeckOfCards.new.shuffle      
     end
@@ -133,7 +214,6 @@ class HackJack
         card_amount  
     end
     
->>>>>>> ded50a740a0ebf609192d1fba03e1ea75292e003
 
 
 
