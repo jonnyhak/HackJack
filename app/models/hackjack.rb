@@ -4,12 +4,7 @@ require 'tty-prompt'
 class HackJack
 
     def run 
-        #welcome
-        #login or sign up
         self.class.main_menu 
-        #main menu
-        #if pick play a round:
-        #play_a_round
     end
     
     def self.main_menu 
@@ -190,6 +185,10 @@ class HackJack
     
     end
     
+    def see_bank
+        @user.bank 
+    end
+
     def self.previous_games
         @user_rounds = Round.where(user_id: @user.id)
         @user_rounds.each_with_index do |round, index|
