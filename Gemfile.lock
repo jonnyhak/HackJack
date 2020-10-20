@@ -32,6 +32,7 @@ GEM
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
+    rake (13.0.1)
     require_all (3.0.0)
     ruby2_keywords (0.0.2)
     sinatra (2.1.0)
@@ -68,6 +69,7 @@ DEPENDENCIES
   deck-of-cards
   faker
   pry
+  rake
   require_all
   sinatra-activerecord
   sqlite3

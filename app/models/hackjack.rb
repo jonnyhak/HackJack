@@ -34,7 +34,8 @@ class HackJack
         user_password = gets.chomp 
         @user = User.all.find_by(username: user_username, password: user_password)
         if @user 
-            self.play_a_round 
+            #self.play_a_round
+            self.login_main_menu 
         else
             puts "Invalid username or password."
             self.login 
@@ -53,6 +54,7 @@ class HackJack
     def self.login_main_menu
         #play a round
         #see previous games
+        #self.previous_games
         #see bank total
         #delete previous games
     end
@@ -188,7 +190,15 @@ class HackJack
     
     end
     
-    
+    def self.previous_games
+        Round.where(user_id: @user.id).each_with_index do |round, index|
+            puts "#{index + 1}." 
+            puts "Dealer name: #{round.dealer.name}"
+            puts "Your total: #{round.user_card_total}"
+            puts "Dealer total: #{round.dealer_card_total}"
+        end
+    end
+
     private
 
     def self.deck_of_cards
