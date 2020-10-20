@@ -37,7 +37,8 @@ class HackJack
             self.login_main_menu 
         else
             puts "Invalid username or password."
-            self.login 
+            sleep(2)
+            self.main_menu  
         end
     end
 
