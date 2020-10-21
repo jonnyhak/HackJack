@@ -9,54 +9,51 @@ class HackJack
         self.class.main_menu 
     end
 
-<<<<<<< HEAD
-    def self.logo 
-        puts "Welcome to"
-=======
     #MAIN MENU ---------------------------------------------------------    
-
-    def self.main_menu 
-        puts "Welcome to 😊"
->>>>>>> 6257de9b98dafa0098b92fab0834ea02c80b180d
-        a = Artii::Base.new 
-        puts a.asciify('HackJack!')
-    end
     
     def self.tty_prompt
         TTY::Prompt.new 
     end
 
+    def self.logo 
+        a = Artii::Base.new 
+        puts a.asciify('HackJack!').red.bold
+        spinner = TTY::Spinner.new(":spinner :spinner :spinner :spinner :spinner :spinner :spinner :spinner ", format: :arrow_pulse)
+            spinner.auto_spin
+            sleep(1)
+            spinner.stop
+    end
+
     def self.main_menu
-        self.logo
-        splash = self.tty_prompt.select("Please log in or sign up!") do |prompt| 
-            prompt.choice "log in"
-            prompt.choice "sign up"
+        puts "Welcome to"
+        self.logo 
+        splash = self.tty_prompt.select("Please Log In or Sign Up!") do |prompt| 
+            prompt.choice "Log In"
+            prompt.choice "Sign Up"
         end
         case splash 
-        when "log in"
-           system('clear')
-            self.login 
-        when "sign up"
+        when "Log In"
             system('clear')
+            self.logo 
+            self.login 
+        when "Sign Up"
+            system('clear')
+            self.logo 
             self.signup 
         end
     end
 
     def self.login 
-        puts "username:"
-        user_username = gets.chomp 
-        puts "password:"
-        user_password = gets.chomp 
-        @user = User.find_by(username: user_username, password: user_password)
+        prompt = self.tty_prompt 
+        username = prompt.ask("Username:")
+        password = prompt.mask("Password:")
+        @user = User.find_by(username: username, password: password)
         if @user 
+            system('clear')
             self.login_main_menu 
         else
             puts "Invalid username or password."
-<<<<<<< HEAD
             sleep(2)
-=======
-            sleep(3)
->>>>>>> 6257de9b98dafa0098b92fab0834ea02c80b180d
             system('clear')
             self.main_menu  
         end
@@ -76,6 +73,7 @@ class HackJack
     #LOGIN MAIN MENU -----------------------------------------------------------
 
     def self.login_main_menu
+        self.logo 
         splash = self.tty_prompt.select("Login Main Menu") do |prompt| 
             prompt.choice "Play a round"
             prompt.choice "See bank total"
@@ -83,23 +81,11 @@ class HackJack
             prompt.choice "Delete previous rounds"
             prompt.choice "Logout"
         end
-<<<<<<< HEAD
-        case splash  
-        when "Play a round"
-            self.play_a_round 
-        when "See bank total"
-            self.see_bank
-        when "Logout"
-            system('clear')
-            self.main_menu
-        when "See previous rounds"
-            self.previous_rounds
-        when "Delete previous rounds"
-            self.delete_previous_rounds
-=======
 
         case splash
             when "Play a round"
+                system('clear')
+                self.logo 
                 self.play_a_round 
             when "See bank total"
                 self.see_bank_total
@@ -110,7 +96,6 @@ class HackJack
             when "Logout"
                 system('clear')
                 self.main_menu
->>>>>>> 6257de9b98dafa0098b92fab0834ea02c80b180d
         end
     end
 
@@ -123,8 +108,7 @@ class HackJack
     def self.play_a_round
         @dealer = Dealer.all.sample 
         @round = Round.create(user_id: @user.id, dealer_id: @dealer.id)
-        puts self.place_your_bet
-        puts self.start_round 
+        puts self.place_your_bet 
         sleep(2) 
         puts self.user_cards 
         sleep(3)
@@ -194,26 +178,8 @@ class HackJack
             self.back_to_main_menu
         else
             puts "Your current bank amount is #{@user.bank} coins."
-            sleep(2)
-<<<<<<< HEAD
-            puts "Place your bet!"
-        end
-
-    def self.start_round
-        bet_amount = gets.chomp
-        @round.update(wager: bet_amount.to_i)
-        if bet_amount.to_i > @user.bank
-            puts "Bet must be lower than your current bank amount: #{@user.bank}!"
-            self.place_your_bet
-        elsif bet_amount.to_i < 1
-            puts "Must place a bet greater than 0"
-            sleep(2)
-            self.place_your_bet
-        else 
-            "You bet #{bet_amount.to_i} coins on this round!"
-=======
+            sleep(1)
             puts "Place your bet! 💸"
-            
             #helper method?
             bet_amount = gets.chomp
             @round.update(wager: bet_amount.to_i)
@@ -227,7 +193,6 @@ class HackJack
             else 
                 "You bet #{bet_amount.to_i} coins on this round!"
             end
->>>>>>> 6257de9b98dafa0098b92fab0834ea02c80b180d
         end
     end
 
@@ -235,13 +200,13 @@ class HackJack
     #     suit = card.split[-1]
     #     case suit 
     #     when "Diamonds"
-    #         card << "♦️️"
+    #         card.push("♦️️")
     #     when "Hearts"
-    #         card << "♥️️"
+    #         card.push("♥️️")
     #     when "Spades"
-    #         card << "♠️️"
+    #         card.push("♠️️")
     #     when "Clubs"
-    #         card << "♣️️"
+    #         card.push("♣️️")
     #     end
     # end
     
@@ -265,6 +230,10 @@ class HackJack
         @user_total = user_card_1_value + user_card_2_value
         # self.suit_emoji(user_card_1)
         # self.suit_emoji(user_card_2)
+        spinner = TTY::Spinner.new(":spinner Dealer is shuffling cards :spinner", format: :arrow_pulse, clear: true)
+            spinner.auto_spin
+            sleep(3)
+            spinner.stop
         puts "Your cards are the #{self.colored_cards(user_card_1)} and the #{self.colored_cards(user_card_2)}."
         
         @round.update(user_card_total: @user_total)
@@ -301,10 +270,14 @@ class HackJack
     end
 
     def self.hit
-        sleep(2) 
+        #sleep(2) 
         next_card = self.deck_of_cards.sample.to_s
         # self.suit_emoji(next_card)
-        puts "Next card is #{self.colored_cards(next_card)}"
+        spinner = TTY::Spinner.new(":spinner Dealer is flipping your card :spinner", format: :arrow_pulse, clear: true)
+            spinner.auto_spin
+            sleep(3)
+            spinner.stop
+        puts "The next card is #{self.colored_cards(next_card)}."
         @round.update(user_card_total: @user_total += self.card_parser(next_card))
         sleep(2)
         puts "Your total is currently #{@round.user_card_total}!"
@@ -347,7 +320,7 @@ class HackJack
 
     def self.dealer_turn 
         if @round.dealer_card_total < 17
-            spinner = TTY::Spinner.new(":spinner Dealer flipping card :spinner", format: :arrow_pulse, clear: true)
+            spinner = TTY::Spinner.new(":spinner Dealer is flipping card :spinner", format: :arrow_pulse, clear: true)
                 spinner.auto_spin
                 sleep(3)
                 spinner.stop
@@ -413,28 +386,7 @@ class HackJack
         end
     end
 
-<<<<<<< HEAD
-    def self.previous_rounds
-        @user_rounds = Round.where(user_id: @user.id)
-        @user_rounds.each_with_index do |round, index|
-            puts "#{index + 1}." 
-            puts "Dealer name: #{round.dealer.name}"
-            puts "Your total: #{round.user_card_total}"
-            puts "Dealer total: #{round.dealer_card_total}"
-        end
-    end
-    
-    def self.back_to_main_menu
-        splash = self.tty_prompt.select("Go Back") do |prompt|
-            prompt.choice "Back to Main Menu"
-        end
-        if splash == "Back to Main Menu"
-            self.login_main_menu
-        end
-    end 
-=======
     #-------------------------------------------------------------------
->>>>>>> 6257de9b98dafa0098b92fab0834ea02c80b180d
 
     
     private
