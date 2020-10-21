@@ -7,7 +7,9 @@ class HackJack
     def run 
         self.class.main_menu 
     end
-    
+
+    #MAIN MENU ---------------------------------------------------------    
+
     def self.main_menu
         puts "Welcome to"
         a = Artii::Base.new 
@@ -50,6 +52,10 @@ class HackJack
         self.login_main_menu
     end
 
+    #---------------------------------------------------------------------------
+
+    #LOGIN MAIN MENU -----------------------------------------------------------
+
     def self.login_main_menu
         prompt = TTY::Prompt.new 
         splash = prompt.select("Login Main Menu") do |prompt| 
@@ -78,7 +84,9 @@ class HackJack
         #rearrange order to out logout to the bottom
     end
 
-    #play a round section
+    #--------------------------------------------------------------------
+
+    #PLAY A ROUND -------------------------------------------------------
 
     def self.play_a_round
         @dealer = Dealer.all.sample 
@@ -221,6 +229,8 @@ class HackJack
         end
     end
 
+    #-------------------------------------------------------------------
+
     def self.previous_rounds #add to login_menu section
         @user_rounds = Round.where(user_id: @user.id)
         @user_rounds.each_with_index do |round, index|
@@ -263,6 +273,8 @@ class HackJack
 
     private
 
+    #CARDS #-------------------------------------------------------------------
+
     def self.deck_of_cards
         DeckOfCards.new.shuffle      
     end
@@ -288,7 +300,7 @@ class HackJack
         card_amount  
     end
     
-
+    #---------------------------------------------------------------------
     
 end #HackJack
 # binding.pry 
