@@ -70,6 +70,7 @@ DEPENDENCIES
   colorize (~> 0.8.1)
   deck-of-cards
   faker
+  pastel
   pry
   rake
   require_all
