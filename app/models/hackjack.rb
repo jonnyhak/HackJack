@@ -7,20 +7,28 @@ class HackJack
     def run 
         self.class.main_menu 
     end
-    
-    def self.main_menu
+
+    def self.logo 
         puts "Welcome to"
         a = Artii::Base.new 
         puts a.asciify('HackJack!')
-        prompt = TTY::Prompt.new 
-        splash = prompt.select("Please log in or sign up!") do |prompt| 
+    end
+    
+    def self.tty_prompt
+        TTY::Prompt.new 
+    end
+
+    def self.main_menu
+        self.logo
+        splash = self.tty_prompt.select("Please log in or sign up!") do |prompt| 
             prompt.choice "log in"
             prompt.choice "sign up"
         end
-        if splash == "log in"
+        case splash 
+        when "log in"
            system('clear')
             self.login 
-        elsif splash == "sign up"
+        when "sign up"
             system('clear')
             self.signup 
         end
@@ -31,13 +39,13 @@ class HackJack
         user_username = gets.chomp 
         puts "password:"
         user_password = gets.chomp 
-        @user = User.all.find_by(username: user_username, password: user_password)
+        @user = User.find_by(username: user_username, password: user_password)
         if @user 
-            #self.play_a_round
             self.login_main_menu 
         else
             puts "Invalid username or password."
             sleep(2)
+            system('clear')
             self.main_menu  
         end
     end
@@ -52,36 +60,40 @@ class HackJack
     end
 
     def self.login_main_menu
-        prompt = TTY::Prompt.new 
-        splash = prompt.select("Login Main Menu") do |prompt| 
+        splash = self.tty_prompt.select("Login Main Menu") do |prompt| 
             prompt.choice "Play a round"
             prompt.choice "See bank total"
             prompt.choice "See previous rounds"
             prompt.choice "Delete previous rounds"
             prompt.choice "Logout"
-
         end
-        if splash == "Play a round"
+        case splash  
+        when "Play a round"
             self.play_a_round 
-        elsif splash == "See bank total"
-            puts "Your current bank amount is #{@user.bank} coins."
-            sleep(3)
-            self.login_main_menu
-        elsif splash == "Logout"
+        when "See bank total"
+            self.see_bank
+        when "Logout"
             system('clear')
             self.main_menu
-        elsif splash == "See previous rounds"
+        when "See previous rounds"
             self.previous_rounds
-        elsif splash == "Delete previous rounds"
+        when "Delete previous rounds"
             self.delete_previous_rounds
         end
     
+    end
+
+    def self.see_bank
+        puts "Your current bank amount is #{@user.bank} coins."
+        sleep(3)
+        self.back_to_main_menu 
     end
 
     def self.play_a_round
         @dealer = Dealer.all.sample 
         @round = Round.create(user_id: @user.id, dealer_id: @dealer.id)
         puts self.place_your_bet
+        puts self.start_round 
         sleep(2) 
         puts self.user_cards 
         sleep(3)
@@ -94,24 +106,25 @@ class HackJack
         if @user.bank == 0
             puts "Insufficient funds"
             sleep(2)
-            self.login_main_menu
+            self.back_to_main_menu
         else
             puts "Your current bank amount is #{@user.bank} coins."
+            sleep(2)
             puts "Place your bet!"
-            bet_amount = gets.chomp
+        end
 
-            #@round.wager = bet_amount.to_i
-            @round.update(wager: bet_amount.to_i)
-            if bet_amount.to_i > @user.bank
-                puts "Bet must be lower than your current bank amount: #{@user.bank}!"
-                self.place_your_bet
-            elsif bet_amount.to_i < 1
-                puts "Must place a bet greater than 0"
-                sleep(2)
-                self.place_your_bet
-            else 
-                "You bet #{bet_amount.to_i} coins on this round!"
-            end
+    def self.start_round
+        bet_amount = gets.chomp
+        @round.update(wager: bet_amount.to_i)
+        if bet_amount.to_i > @user.bank
+            puts "Bet must be lower than your current bank amount: #{@user.bank}!"
+            self.place_your_bet
+        elsif bet_amount.to_i < 1
+            puts "Must place a bet greater than 0"
+            sleep(2)
+            self.place_your_bet
+        else 
+            "You bet #{bet_amount.to_i} coins on this round!"
         end
     end
     
@@ -228,14 +241,16 @@ class HackJack
             puts "Your total: #{round.user_card_total}"
             puts "Dealer total: #{round.dealer_card_total}"
         end
-            prompt = TTY::Prompt.new
-            splash = prompt.select("Go Back") do |prompt|
-                prompt.choice "Back to Main Menu"
-            end
-            if splash == "Back to Main Menu"
-                self.login_main_menu
-            end 
     end
+    
+    def self.back_to_main_menu
+        splash = self.tty_prompt.select("Go Back") do |prompt|
+            prompt.choice "Back to Main Menu"
+        end
+        if splash == "Back to Main Menu"
+            self.login_main_menu
+        end
+    end 
 
     def self.delete_previous_rounds
         prompt = TTY::Prompt.new 
