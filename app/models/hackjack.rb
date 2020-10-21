@@ -1,6 +1,7 @@
 require 'deck-of-cards'
 require 'tty-prompt'
 require 'pry'
+require 'pastel'
 
 class HackJack
 
@@ -10,8 +11,8 @@ class HackJack
 
     #MAIN MENU ---------------------------------------------------------    
 
-    def self.main_menu
-        puts "Welcome to"
+    def self.main_menu 
+        puts "Welcome to 😊"
         a = Artii::Base.new 
         puts a.asciify('HackJack!')
         prompt = TTY::Prompt.new 
@@ -126,7 +127,7 @@ class HackJack
             @user.update(bank: 20)
             puts "All rounds have been deleted."
             sleep(2)
-            puts "Your bank amount has been set to 20"
+            puts "Your bank amount has been set to 20 💰"
             sleep(2)
             self.back_to_main_menu
         elsif splash == "No"
@@ -150,18 +151,17 @@ class HackJack
 
     def self.place_your_bet
         if @user.bank == 0
-            puts "Insufficient funds"
+            puts "Insufficient funds 🚫"
             sleep(2)
             self.back_to_main_menu
         else
             puts "Your current bank amount is #{@user.bank} coins."
             sleep(2)
-            puts "Place your bet!"
+            puts "Place your bet! 💸"
             
             #helper method?
             bet_amount = gets.chomp
             @round.update(wager: bet_amount.to_i)
-
             if bet_amount.to_i > @user.bank
                 puts "Bet must be lower than your current bank amount: #{@user.bank}!"
                 self.place_your_bet
@@ -174,12 +174,28 @@ class HackJack
             end
         end
     end
+
+    # def self.suit_emoji(card)
+    #     suit = card.split[-1]
+    #     case suit 
+    #     when "Diamonds"
+    #         card << "♦️️"
+    #     when "Hearts"
+    #         card << "♥️️"
+    #     when "Spades"
+    #         card << "♠️️"
+    #     when "Clubs"
+    #         card << "♣️️"
+    #     end
+    # end
     
     def self.user_cards 
         user_card_1 = self.deck_of_cards.sample.to_s
         user_card_2 = self.deck_of_cards.sample.to_s
         @user_total = self.card_parser(user_card_1) + self.card_parser(user_card_2)
-        puts "Your cards are the #{user_card_1} and the #{user_card_2}."
+        # self.suit_emoji(user_card_1)
+        # self.suit_emoji(user_card_2)
+        puts "Your cards are the #{self.colored_cards(user_card_1)} and the #{self.colored_cards(user_card_2)}."
         
         @round.update(user_card_total: @user_total)
         sleep(2)
@@ -188,8 +204,9 @@ class HackJack
     
     def self.dealer_card
         @dealer_card_1 = self.deck_of_cards.sample.to_s
-        @dealer_total = self.card_parser(@dealer_card_1) 
-        puts "The dealer's cards are #{@dealer_card_1} and *unknown*."
+        @dealer_total = self.card_parser(@dealer_card_1)
+        # self.suit_emoji(@dealer_card_1) 
+        puts "The dealer's cards are #{self.colored_cards(@dealer_card_1)} and *unknown*."
         @round.update(dealer_card_total: @dealer_total)
         sleep(2)
         puts "The dealer currently shows a #{@dealer_card_1.split[0]}."
@@ -211,7 +228,8 @@ class HackJack
     def self.hit
         sleep(2) 
         next_card = self.deck_of_cards.sample.to_s
-        puts "Next card is #{next_card}"
+        # self.suit_emoji(next_card)
+        puts "Next card is #{self.colored_cards(next_card)}"
         @round.update(user_card_total: @user_total += self.card_parser(next_card))
         sleep(2)
         puts "Your total is currently #{@round.user_card_total}!"
@@ -220,7 +238,7 @@ class HackJack
             self.hit_or_stay
         else
             sleep(2)
-            puts "Over 21! Bust!"
+            puts "Over 21! Bust! 😭"
             bank_total = @user.bank
             @user.update(bank: bank_total - @round.wager)
             sleep(2)
@@ -230,15 +248,18 @@ class HackJack
     end
 
     def self.stay
-        sleep(2) 
+        spinner = TTY::Spinner.new(":spinner Dealer flipping card :spinner", format: :arrow_pulse, clear: true)
+            spinner.auto_spin
+            sleep(3)
+            spinner.stop
+        #sleep(2) 
         dealer_card_2 = self.deck_of_cards.sample.to_s
-        puts "The dealer's flipped card is #{dealer_card_2}."
+        # self.suit_emoji(dealer_card_2)
+        puts "The dealer's flipped card is #{self.colored_cards(dealer_card_2)}."
         @round.update(dealer_card_total: @dealer_total += self.card_parser(dealer_card_2))
         sleep(2)
         puts "The dealer's total is currently #{@round.dealer_card_total}."
-
         self.dealer_turn
-
         sleep(2)
         self.play_another_round?
     end
@@ -249,7 +270,7 @@ class HackJack
             self.stay
         elsif @round.dealer_card_total > 21
             sleep(2)
-            puts "Dealer Busts!"
+            puts "Dealer Busts! 🤑"
             bank_total = @user.bank
             @user.update(bank: bank_total + @round.wager)
             sleep(2)
@@ -265,14 +286,14 @@ class HackJack
                 puts "Push!"
             elsif @round.dealer_card_total > @round.user_card_total
                 sleep(2)
-                puts "Dealer wins round :("
+                puts "Dealer wins round 😭"
                 bank_total = @user.bank
                 @user.update(bank: bank_total - @round.wager)
                 sleep(2)
                 puts "Your bank total is now #{@user.bank}"
             else
                 sleep(2)
-                puts "User wins round :)"
+                puts "User wins round 🤑"
                 bank_total = @user.bank
                 @user.update(bank: bank_total + @round.wager)
                 sleep(2)
@@ -327,6 +348,16 @@ class HackJack
         card_amount  
     end
     
+    def self.colored_cards(card)
+        pastel = Pastel.new 
+        suit = card.split[-1]
+        if suit == "Diamonds" || suit == "Hearts"
+            pastel.red(card)
+        elsif suit == "Spades" || suit == "Clubs"
+            pastel.blue(card)
+        end
+    end
+
     #---------------------------------------------------------------------
     
 end #HackJack
