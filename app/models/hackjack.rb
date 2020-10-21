@@ -38,7 +38,8 @@ class HackJack
             self.login_main_menu 
         else
             puts "Invalid username or password."
-            sleep(2)
+            sleep(3)
+            system('clear')
             self.main_menu  
         end
     end
@@ -147,8 +148,6 @@ class HackJack
 
     #PLAY A ROUND -------------------------------------------------------
 
-    
-
     def self.place_your_bet
         if @user.bank == 0
             puts "Insufficient funds"
@@ -226,7 +225,7 @@ class HackJack
             @user.update(bank: bank_total - @round.wager)
             sleep(2)
             puts "Your bank total is now #{@user.bank}"
-            self.back_to_main_menu
+            self.play_another_round?
         end
     end
 
@@ -238,7 +237,13 @@ class HackJack
         sleep(2)
         puts "The dealer's total is currently #{@round.dealer_card_total}."
 
-        #dealer_turn helper method
+        self.dealer_turn
+
+        sleep(2)
+        self.play_another_round?
+    end
+
+    def self.dealer_turn 
         if @round.dealer_card_total < 17
             sleep(2)
             self.stay
@@ -250,8 +255,12 @@ class HackJack
             sleep(2)
             puts "Your bank total is now #{@user.bank}"
         else
-            #comparing_totals helper method (who wins round?)
-            if @round.dealer_card_total == @round.user_card_total
+            self.who_wins_round
+        end
+    end
+
+    def self.who_wins_round 
+        if @round.dealer_card_total == @round.user_card_total
                 sleep(2)
                 puts "Push!"
             elsif @round.dealer_card_total > @round.user_card_total
@@ -269,10 +278,6 @@ class HackJack
                 sleep(2)
                 puts "Your bank total is now #{@user.bank}"
             end
-        end
-        #call self.play_another_round? instead
-        sleep(2)
-        self.back_to_main_menu
     end
 
     def self.play_another_round?
@@ -283,6 +288,7 @@ class HackJack
         end
         if splash == "Yes!"
             if @user.bank > 0
+                system('clear')
                 self.play_a_round
             else
                puts "You are out of coins :("
@@ -297,7 +303,6 @@ class HackJack
     #-------------------------------------------------------------------
 
     
-
     private
 
     #CARDS #-------------------------------------------------------------------
@@ -308,17 +313,12 @@ class HackJack
     
 
     def self.card_parser(card)
-        #jack or queen or king all on one line
+        face_cards = ["Jack", "Queen", "King"]
         card_amount = 0
-        if card.include?("Jack")
+        if face_cards.include?(card.split[0])
             card_amount = 10
-        elsif card.include?("Queen")
-            card_amount = 10
-        elsif card.include?("King")
-            card_amount = 10 
         elsif card.include?("Ace")
             card_amount = 1
-            #when to pick 1 or 11
         elsif card.include?("10")
             card_amount = 10 
         else
