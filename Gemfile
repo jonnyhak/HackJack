@@ -10,5 +10,7 @@ gem "tty-prompt"
 gem "deck-of-cards"
 gem "faker"
 gem 'artii', '~> 2.1', '>= 2.1.2'
+gem 'pastel'
 
+gem 'tty-spinner'
 

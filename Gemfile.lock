@@ -56,6 +56,8 @@ GEM
       tty-screen (~> 0.8)
       wisper (~> 2.0)
     tty-screen (0.8.1)
+    tty-spinner (0.9.3)
+      tty-cursor (~> 0.7)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     wisper (2.0.1)
@@ -68,12 +70,14 @@ DEPENDENCIES
   artii (~> 2.1, >= 2.1.2)
   deck-of-cards
   faker
+  pastel
   pry
   rake
   require_all
   sinatra-activerecord
   sqlite3
   tty-prompt
+  tty-spinner
 
 BUNDLED WITH
    2.1.4
