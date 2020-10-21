@@ -12,9 +12,6 @@ gem "faker"
 gem 'colorize', '~> 0.8.1'
 gem 'artii', '~> 2.1', '>= 2.1.2'
 gem 'pastel'
-<<<<<<< HEAD
 
-=======
 gem 'tty-spinner'
->>>>>>> adding-colors
 
