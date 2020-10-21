@@ -65,28 +65,21 @@ class HackJack
             prompt.choice "Delete previous rounds"
             prompt.choice "Logout"
         end
-        #use Case instead of splash == 
-        if splash == "Play a round"
-            self.play_a_round 
-        elsif splash == "See bank total"
-            #put in to another method
-            puts "Your current bank amount is #{@user.bank} coins."
-            sleep(3)
-            self.login_main_menu
-        elsif splash == "Logout"
-            system('clear')
-            self.main_menu
-        elsif splash == "See previous rounds"
-            self.previous_rounds
-        elsif splash == "Delete previous rounds"
-            self.delete_previous_rounds
+
+        case splash
+            when "Play a round"
+                self.play_a_round 
+            when "See bank total"
+                self.see_bank_total
+            when "See previous rounds"
+                self.previous_rounds
+            when "Delete previous rounds"
+                self.delete_previous_rounds
+            when "Logout"
+                system('clear')
+                self.main_menu
         end
-        #rearrange order to out logout to the bottom
     end
-
-    #--------------------------------------------------------------------
-
-    #PLAY A ROUND -------------------------------------------------------
 
     def self.play_a_round
         @dealer = Dealer.all.sample 
@@ -100,13 +93,70 @@ class HackJack
         puts self.hit_or_stay
     end
 
+    def self.see_bank_total
+        puts "Your current bank amount is #{@user.bank} coins."
+        sleep(3)
+        self.back_to_main_menu
+    end
+
+    def self.previous_rounds 
+        @user_rounds = Round.where(user_id: @user.id)
+        @user_rounds.each_with_index do |round, index|
+            puts "#{index + 1}." 
+            puts "Dealer name: #{round.dealer.name}"
+            puts "Your total: #{round.user_card_total}"
+            puts "Dealer total: #{round.dealer_card_total}"
+            puts "Bet amount: #{round.wager}"
+            
+        end
+            
+        self.back_to_main_menu 
+    end
+
+
+    def self.delete_previous_rounds 
+        prompt = TTY::Prompt.new 
+        splash = prompt.select("Would you like to delete all outcomes?") do |prompt| 
+            prompt.choice "Yes"
+            prompt.choice "No"
+        end
+        if splash == "Yes"
+            @user_rounds.destroy_all
+            @user.update(bank: 20)
+            puts "All rounds have been deleted."
+            sleep(2)
+            puts "Your bank amount has been set to 20"
+            sleep(2)
+            self.back_to_main_menu
+        elsif splash == "No"
+            self.back_to_main_menu 
+        end
+    end
+
+    def self.back_to_main_menu
+        prompt = TTY::Prompt.new
+        splash = prompt.select("Go Back") do |prompt|
+            prompt.choice "Back to Main Menu"
+        end
+        if splash == "Back to Main Menu"
+            system('clear')
+            self.login_main_menu
+        end
+    end
+    #--------------------------------------------------------------------
+
+    #PLAY A ROUND -------------------------------------------------------
+
+    
+
     def self.place_your_bet
         if @user.bank == 0
             puts "Insufficient funds"
             sleep(2)
-            self.login_main_menu
+            self.back_to_main_menu
         else
             puts "Your current bank amount is #{@user.bank} coins."
+            sleep(2)
             puts "Place your bet!"
             
             #helper method?
@@ -133,6 +183,7 @@ class HackJack
         puts "Your cards are the #{user_card_1} and the #{user_card_2}."
         
         @round.update(user_card_total: @user_total)
+        sleep(2)
         puts "Your total is currently #{@round.user_card_total}!"
     end
     
@@ -141,9 +192,8 @@ class HackJack
         @dealer_total = self.card_parser(@dealer_card_1) 
         puts "The dealer's cards are #{@dealer_card_1} and *unknown*."
         @round.update(dealer_card_total: @dealer_total)
-        
-        #"dealer shows a card amount"
-        puts "The dealer's total is currently #{@round.dealer_card_total}."
+        sleep(2)
+        puts "The dealer currently shows a #{@dealer_card_1.split[0]}."
     end
 
     def self.hit_or_stay 
@@ -159,55 +209,70 @@ class HackJack
         end
     end
 
-    def self.hit 
+    def self.hit
+        sleep(2) 
         next_card = self.deck_of_cards.sample.to_s
         puts "Next card is #{next_card}"
         @round.update(user_card_total: @user_total += self.card_parser(next_card))
+        sleep(2)
         puts "Your total is currently #{@round.user_card_total}!"
         if @round.user_card_total <= 21
+            sleep(2)
             self.hit_or_stay
         else
+            sleep(2)
             puts "Over 21! Bust!"
             bank_total = @user.bank
             @user.update(bank: bank_total - @round.wager)
+            sleep(2)
             puts "Your bank total is now #{@user.bank}"
-            self.login_main_menu
+            self.back_to_main_menu
         end
     end
 
-    def self.stay 
+    def self.stay
+        sleep(2) 
         dealer_card_2 = self.deck_of_cards.sample.to_s
-        puts "The dealer's card is #{dealer_card_2}."
+        puts "The dealer's flipped card is #{dealer_card_2}."
         @round.update(dealer_card_total: @dealer_total += self.card_parser(dealer_card_2))
+        sleep(2)
         puts "The dealer's total is currently #{@round.dealer_card_total}."
 
         #dealer_turn helper method
         if @round.dealer_card_total < 17
-            sleep(5)
+            sleep(2)
             self.stay
         elsif @round.dealer_card_total > 21
+            sleep(2)
             puts "Dealer Busts!"
             bank_total = @user.bank
             @user.update(bank: bank_total + @round.wager)
+            sleep(2)
             puts "Your bank total is now #{@user.bank}"
         else
             #comparing_totals helper method (who wins round?)
             if @round.dealer_card_total == @round.user_card_total
+                sleep(2)
                 puts "Push!"
             elsif @round.dealer_card_total > @round.user_card_total
+                sleep(2)
                 puts "Dealer wins round :("
                 bank_total = @user.bank
                 @user.update(bank: bank_total - @round.wager)
+                sleep(2)
                 puts "Your bank total is now #{@user.bank}"
             else
+                sleep(2)
                 puts "User wins round :)"
                 bank_total = @user.bank
                 @user.update(bank: bank_total + @round.wager)
+                sleep(2)
                 puts "Your bank total is now #{@user.bank}"
             end
         end
         #call self.play_another_round? instead
-        self.login_main_menu
+        sleep(2)
+        self.back_to_main_menu
     end
 
     def self.play_another_round?
@@ -221,55 +286,17 @@ class HackJack
                 self.play_a_round
             else
                puts "You are out of coins :("
-               self.login_main_menu 
+               self.back_to_main_menu 
             end
         elsif splash == "No"
             puts "See you next time"
-            self.login_main_menu 
+            self.back_to_main_menu 
         end
     end
 
     #-------------------------------------------------------------------
 
-    def self.previous_rounds #add to login_menu section
-        @user_rounds = Round.where(user_id: @user.id)
-        @user_rounds.each_with_index do |round, index|
-            puts "#{index + 1}." 
-            puts "Dealer name: #{round.dealer.name}"
-            puts "Your total: #{round.user_card_total}"
-            puts "Dealer total: #{round.dealer_card_total}"
-            #how much did user wager?
-        end
-            #separate back_to_main_menu method
-            prompt = TTY::Prompt.new
-            splash = prompt.select("Go Back") do |prompt|
-                prompt.choice "Back to Main Menu"
-            end
-            if splash == "Back to Main Menu"
-                #system('clear')
-                self.login_main_menu
-            end 
-    end
-
-    def self.delete_previous_rounds #add to login_menu section
-        prompt = TTY::Prompt.new 
-        splash = prompt.select("Would you like to delete all outcomes?") do |prompt| 
-            prompt.choice "Yes"
-            prompt.choice "No"
-        end
-            if splash == "Yes"
-                @user_rounds.destroy_all
-                #updating bank helper method?
-                @user.update(bank: 20)
-                puts "All rounds have been deleted."
-                sleep(2)
-                puts "Your bank amount has been set to 20"
-                sleep(2)
-                self.login_main_menu
-            elsif splash == "No"
-                self.login_main_menu 
-            end
-    end
+    
 
     private
 
