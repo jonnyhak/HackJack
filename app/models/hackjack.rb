@@ -234,7 +234,7 @@ class HackJack
         puts "The dealer's cards are #{self.colored_cards(@dealer_card_1)} and *unknown*"
         @round.update(dealer_card_total: @dealer_total)
         sleep(2)
-        puts "The dealer currently shows a(n) #{@dealer_card_1.split[0]}."
+        puts "The dealer currently shows a #{@dealer_card_1.split[0]}."
     end
 
     def self.hit_or_stay 
