@@ -70,16 +70,14 @@ class HackJack
     def self.login_main_menu
         self.logo 
         splash = self.tty_prompt.select("Main Menu") do |prompt| 
-            prompt.choice "Play a round"
+            prompt.choice "Play A Round"
             prompt.choice "See Bank Total"
             prompt.choice "See Previous Rounds"
             prompt.choice "Delete Previous Rounds"
             prompt.choice "Logout"
         end
         case splash
-            when "Play a round"
-                #system('clear')
-                #self.logo 
+            when "Play a round" 
                 self.play_a_round 
             when "See bank total"
                 self.see_bank_total
