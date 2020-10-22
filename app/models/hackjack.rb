@@ -416,10 +416,14 @@ class HackJack
     def self.colored_cards(card)
         pastel = Pastel.new 
         suit = card.split[-1]
-        if suit == "Diamonds" || suit == "Hearts"
-            pastel.red(card)
-        elsif suit == "Spades" || suit == "Clubs"
-            pastel.blue(card)
+        if suit == "Diamonds"
+            pastel.red(card + " ♦️️")
+        elsif suit == "Hearts"
+            pastel.red(card + " ♥️️")
+        elsif suit == "Spades"
+            pastel.blue(card + " ♠️️")
+        elsif suit == "Clubs"
+            pastel.blue(card + " ♣️️")
         end
     end
 
