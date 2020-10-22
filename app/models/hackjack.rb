@@ -8,22 +8,22 @@ class HackJack
     def run 
         self.class.main_menu 
     end
-
-    #MAIN MENU ---------------------------------------------------------    
     
     def self.tty_prompt
         TTY::Prompt.new 
     end
-
+    
     def self.logo 
         a = Artii::Base.new 
         puts a.asciify('HackJack!').red.bold
         spinner = TTY::Spinner.new(":spinner :spinner :spinner :spinner :spinner :spinner :spinner :spinner ", format: :arrow_pulse)
-            spinner.auto_spin
-            sleep(1)
-            spinner.stop
+        spinner.auto_spin
+        sleep(1)
+        spinner.stop
     end
 
+    #MAIN MENU ---------------------------------------------------------    
+    
     def self.main_menu
         puts "Welcome to"
         self.logo 
@@ -33,12 +33,8 @@ class HackJack
         end
         case splash 
         when "Log In"
-            system('clear')
-            self.logo 
             self.login 
         when "Sign Up"
-            system('clear')
-            self.logo 
             self.signup 
         end
     end
@@ -59,34 +55,31 @@ class HackJack
         end
     end
 
-    def self.signup
-        self.logo 
-        puts "username:"
-        user_username = gets.chomp 
-        puts "password:"
-        user_password = gets.chomp
-        @user = User.create(username: user_username, password: user_password)
+    def self.signup 
+        prompt = self.tty_prompt
+        username = prompt.ask("Username:")
+        password = prompt.mask("Password:")
+        @user = User.create(username: username, password: password)
+        system('clear')
         self.login_main_menu
     end
 
     #---------------------------------------------------------------------------
-
     #LOGIN MAIN MENU -----------------------------------------------------------
 
     def self.login_main_menu
         self.logo 
-        splash = self.tty_prompt.select("Login Main Menu") do |prompt| 
+        splash = self.tty_prompt.select("Main Menu") do |prompt| 
             prompt.choice "Play a round"
-            prompt.choice "See bank total"
-            prompt.choice "See previous rounds"
-            prompt.choice "Delete previous rounds"
+            prompt.choice "See Bank Total"
+            prompt.choice "See Previous Rounds"
+            prompt.choice "Delete Previous Rounds"
             prompt.choice "Logout"
         end
-
         case splash
             when "Play a round"
-                system('clear')
-                self.logo 
+                #system('clear')
+                #self.logo 
                 self.play_a_round 
             when "See bank total"
                 self.see_bank_total
