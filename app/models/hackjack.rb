@@ -24,6 +24,19 @@ class HackJack
 
     #MAIN MENU ---------------------------------------------------------    
     
+    def self.tty_prompt
+        TTY::Prompt.new 
+    end
+
+    def self.logo 
+        a = Artii::Base.new 
+        puts a.asciify('HackJack!').red.bold
+        spinner = TTY::Spinner.new(":spinner :spinner :spinner :spinner :spinner :spinner :spinner :spinner ", format: :arrow_pulse)
+            spinner.auto_spin
+            sleep(1)
+            spinner.stop
+    end
+
     def self.main_menu
         puts "Welcome to"
         self.logo 
@@ -198,7 +211,6 @@ class HackJack
         user_card_2_value == 1 ? user_card_2_value = 11 : user_card_2_value = self.card_parser(user_card_2)
 
         @user_total = user_card_1_value + user_card_2_value
-
         spinner = TTY::Spinner.new(":spinner Dealer is shuffling cards :spinner", format: :arrow_pulse, clear: true)
             spinner.auto_spin
             sleep(3)
