@@ -38,6 +38,7 @@ class HackJack
     end
 
     def self.main_menu
+        system('clear')
         puts "Welcome to"
         self.logo 
         splash = self.tty_prompt.select("Please Log In or Sign Up!") do |prompt| 
