@@ -11,10 +11,16 @@ class HackJack
 
     #MAIN MENU ---------------------------------------------------------    
 
-    def self.main_menu 
-        puts "Welcome to 😊"
+    def self.logo 
         a = Artii::Base.new 
         puts a.asciify('HackJack!')
+    end
+    
+    
+    def self.main_menu
+        system('clear') 
+        puts "Welcome to"
+        self.logo
         prompt = TTY::Prompt.new 
         splash = prompt.select("Please log in or sign up!") do |prompt| 
             prompt.choice "log in"
@@ -29,7 +35,8 @@ class HackJack
         end
     end
 
-    def self.login 
+    def self.login
+        self.logo 
         puts "username:"
         user_username = gets.chomp 
         puts "password:"
@@ -45,7 +52,8 @@ class HackJack
         end
     end
 
-    def self.signup 
+    def self.signup
+        self.logo 
         puts "username:"
         user_username = gets.chomp 
         puts "password:"
@@ -59,6 +67,8 @@ class HackJack
     #LOGIN MAIN MENU -----------------------------------------------------------
 
     def self.login_main_menu
+        system('clear')
+        self.logo
         prompt = TTY::Prompt.new 
         splash = prompt.select("Login Main Menu") do |prompt| 
             prompt.choice "Play a round"
@@ -84,6 +94,8 @@ class HackJack
     end
 
     def self.play_a_round
+        system('clear')
+        self.logo
         @dealer = Dealer.all.sample 
         @round = Round.create(user_id: @user.id, dealer_id: @dealer.id)
         puts self.place_your_bet
