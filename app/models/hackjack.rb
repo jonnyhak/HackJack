@@ -77,13 +77,13 @@ class HackJack
             prompt.choice "Logout"
         end
         case splash
-            when "Play a round" 
+            when "Play A Round" 
                 self.play_a_round 
-            when "See bank total"
-                self.see_bank_total
-            when "See previous rounds"
+            when "See Bank Total"
+                self.see_bank 
+            when "See Previous Rounds"
                 self.previous_rounds
-            when "Delete previous rounds"
+            when "Delete Previous Rounds"
                 self.delete_previous_rounds
             when "Logout"
                 system('clear')
@@ -93,7 +93,7 @@ class HackJack
 
     def self.see_bank
         puts "Your current bank amount is #{@user.bank} coins."
-        sleep(3)
+        sleep(1)
         self.back_to_main_menu 
     end
 
@@ -121,20 +121,19 @@ class HackJack
         @user_rounds = Round.where(user_id: @user.id)
         @user_rounds.each_with_index do |round, index|
             puts "#{index + 1}." 
-            puts "Dealer name: #{round.dealer.name}"
-            puts "Your total: #{round.user_card_total}"
-            puts "Dealer total: #{round.dealer_card_total}"
-            puts "Bet amount: #{round.wager}"
-            
-        end
-            
+            puts "Bet Amount: #{round.wager}"
+            puts "Dealer Name: #{round.dealer.name}"
+            puts "Your Total: #{round.user_card_total}"
+            puts "Dealer Total: #{round.dealer_card_total}"
+            puts " "
+        end  
         self.back_to_main_menu 
     end
 
 
     def self.delete_previous_rounds 
         prompt = TTY::Prompt.new 
-        splash = prompt.select("Would you like to delete all outcomes?") do |prompt| 
+        splash = prompt.select("Are you sure you want to delete all rounds?") do |prompt| 
             prompt.choice "Yes"
             prompt.choice "No"
         end
@@ -174,14 +173,13 @@ class HackJack
             puts "Your current bank amount is #{@user.bank} coins."
             sleep(1)
             puts "Place your bet! 💸"
-            #helper method?
             bet_amount = gets.chomp
             @round.update(wager: bet_amount.to_i)
             if bet_amount.to_i > @user.bank
                 puts "Bet must be lower than your current bank amount: #{@user.bank}!"
                 self.place_your_bet
             elsif bet_amount.to_i < 1
-                puts "Must place a bet greater than 0"
+                puts "Must place a bet greater than 0."
                 sleep(2)
                 self.place_your_bet
             else 
@@ -189,20 +187,6 @@ class HackJack
             end
         end
     end
-
-    # def self.suit_emoji(card)
-    #     suit = card.split[-1]
-    #     case suit 
-    #     when "Diamonds"
-    #         card.push("♦️️")
-    #     when "Hearts"
-    #         card.push("♥️️")
-    #     when "Spades"
-    #         card.push("♠️️")
-    #     when "Clubs"
-    #         card.push("♣️️")
-    #     end
-    # end
     
     def self.user_cards 
         user_card_1 = self.deck_of_cards.sample.to_s
