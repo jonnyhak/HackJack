@@ -222,6 +222,18 @@ class HackJack
         @round.update(user_card_total: @user_total)
         sleep(2)
         puts "Your total is currently #{@round.user_card_total}!"
+
+        if @round.user_card_total == 21
+            puts "HackJack!"
+            sleep(2)
+            puts "User wins round 🤑"
+            bank_total = @user.bank
+            @user.update(bank: bank_total + @round.wager)
+            sleep(2)
+            puts "Your bank total is now #{@user.bank} coins!"
+            sleep(2)
+            self.play_another_round?
+        end
     end
     
     def self.dealer_card
