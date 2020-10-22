@@ -8,9 +8,9 @@ Welcome to the HackJack Casino Gaming Room! You can sign up or log in to start. 
 
 Clone `git@github.com:jonnyhak/HackJack.git` to your local machine and run bundle install.
 
-Then run Rake db:migrate
+Then run `Rake db:migrate`
 
-Then run Rake db:seed
+Then run `Rake db:seed`
 
 ### Acknowledgements
 
