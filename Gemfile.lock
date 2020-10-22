@@ -14,6 +14,7 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     artii (2.1.2)
     coderay (1.1.3)
+    colorize (0.8.1)
     concurrent-ruby (1.1.7)
     deck-of-cards (0.0.7)
     faker (2.14.0)
@@ -68,6 +69,7 @@ PLATFORMS
 
 DEPENDENCIES
   artii (~> 2.1, >= 2.1.2)
+  colorize
   deck-of-cards
   faker
   pastel
