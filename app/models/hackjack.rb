@@ -82,7 +82,8 @@ class HackJack
     #LOGIN MAIN MENU -----------------------------------------------------------
 
     def self.login_main_menu
-        self.logo 
+        self.logo
+        puts "Welcome #{@user.username}!" 
         splash = self.tty_prompt.select("Main Menu") do |prompt| 
             prompt.choice "Play A Round"
             prompt.choice "See Bank Total"
@@ -190,7 +191,7 @@ class HackJack
             bet_amount = gets.chomp
             @round.update(wager: bet_amount.to_i)
             if bet_amount.to_i > @user.bank
-                puts "Bet must be lower than your current bank amount: #{@user.bank}!"
+                puts "Bet must be lower than your current bank amount: #{@user.bank}"
                 self.place_your_bet
             elsif bet_amount.to_i < 1
                 puts "Must place a bet greater than 0."
